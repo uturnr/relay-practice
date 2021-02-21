@@ -1,0 +1,40 @@
+type Project {
+  id: Int!
+  author: Author!
+  name: String!
+  categories: [Category!]
+  comments: [Comment!]
+  likes: [Likes!]
+  url: String!
+  thumbnailUrl: String
+}
+
+type Comment {
+  id: Int!
+  date: Int!
+  text: String!
+  author: Author!
+}
+
+type Author {
+  id: Int!
+  name: String!
+  profilePhotoUrl: String
+  userType: UserType!
+}
+
+type Like {
+  id: Int!
+  author: Author!
+}
+
+type Category {
+  id: Int!
+  name: String!
+}
+
+enum UserType {
+  PRO
+  TEAM
+  FREE
+}
