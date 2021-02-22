@@ -3,10 +3,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type AppRepositoryNameQueryVariables = {};
+export type AppRepositoryNameQueryVariables = {
+    name: string;
+    owner: string;
+};
 export type AppRepositoryNameQueryResponse = {
     readonly repository: {
         readonly name: string;
+        readonly url: unknown;
     } | null;
 };
 export type AppRepositoryNameQuery = {
@@ -17,9 +21,13 @@ export type AppRepositoryNameQuery = {
 
 
 /*
-query AppRepositoryNameQuery {
-  repository(owner: "contrawork", name: "graphql-helix") {
+query AppRepositoryNameQuery(
+  $name: String!
+  $owner: String!
+) {
+  repository(owner: $owner, name: $name) {
     name
+    url
     id
   }
 }
@@ -28,41 +36,61 @@ query AppRepositoryNameQuery {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
-    "kind": "Literal",
-    "name": "name",
-    "value": "graphql-helix"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "name"
   },
   {
-    "kind": "Literal",
-    "name": "owner",
-    "value": "contrawork"
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "owner"
   }
 ],
-v1 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "name",
+    "variableName": "name"
+  },
+  {
+    "kind": "Variable",
+    "name": "owner",
+    "variableName": "owner"
+  }
+],
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "url",
+  "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AppRepositoryNameQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "Repository",
         "kind": "LinkedField",
         "name": "repository",
         "plural": false,
         "selections": [
-          (v1/*: any*/)
+          (v2/*: any*/),
+          (v3/*: any*/)
         ],
-        "storageKey": "repository(name:\"graphql-helix\",owner:\"contrawork\")"
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -70,19 +98,20 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AppRepositoryNameQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "Repository",
         "kind": "LinkedField",
         "name": "repository",
         "plural": false,
         "selections": [
-          (v1/*: any*/),
+          (v2/*: any*/),
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -91,19 +120,19 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "repository(name:\"graphql-helix\",owner:\"contrawork\")"
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "ae3e6856289921597c3b5735ed6f9bca",
+    "cacheID": "d70a40ac1a343970e40f6135a4cc1ab6",
     "id": null,
     "metadata": {},
     "name": "AppRepositoryNameQuery",
     "operationKind": "query",
-    "text": "query AppRepositoryNameQuery {\n  repository(owner: \"contrawork\", name: \"graphql-helix\") {\n    name\n    id\n  }\n}\n"
+    "text": "query AppRepositoryNameQuery(\n  $name: String!\n  $owner: String!\n) {\n  repository(owner: $owner, name: $name) {\n    name\n    url\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '83104bf47ca8477cdb5d68f52df6e84b';
+(node as any).hash = '93002ffda4ff687b3ce4c38608826008';
 export default node;

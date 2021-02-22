@@ -1,14 +1,19 @@
 // your-app-name/src/RelayEnvironment.js
-import { Environment, FetchFunction, Network, RecordSource, Store } from 'relay-runtime';
-import fetchGraphQL from './fetchGraphQL';
+import type {
+  FetchFunction,
+} from 'relay-runtime';
+import {
+  Environment, Network, RecordSource, Store,
+} from 'relay-runtime';
+
+import fetchGraphQl from './fetchGraphQl';
 
 // Relay passes a "params" object with the query name and text. So we define a helper function
 // to call our fetchGraphQL utility with params.text.
 
-const fetchRelay: FetchFunction = async (params, variables) => {
-  console.log(`fetching query ${params.name} with ${JSON.stringify(variables)}`);
-  return fetchGraphQL(params.text, variables);
-}
+const fetchRelay: FetchFunction = async (parameters, variables) => {
+  return fetchGraphQl(parameters.text, variables);
+};
 
 // Export a singleton instance of Relay Environment configured with our network function:
 export default new Environment({
