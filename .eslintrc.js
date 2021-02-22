@@ -8,16 +8,22 @@ module.exports = {
     'canonical/jest',
     'canonical/react',
     'canonical/typescript',
+    'plugin:relay/recommended',
   ],
   parserOptions: {
     parser: '@typescript-eslint/parser',
     project: './tsconfig.eslint.json',
   },
+  plugins: ['relay'],
   rules: {
     'filenames/match-regex': [
       'warn',
       '^[A-Z]?[a-z]+(?:[A-Z][a-z]+)*\\.?[A-Z]?[a-z]*$',
       false,
+    ],
+    'id-match': [
+      'error',
+      '(^[A-Za-z]+(?:[A-Z][a-z]*)*\\d*$)|(^[A-Z]+(_[A-Z]+)*(_\\d$)*$)|(^(_|\\$)$)|.*_.*$.*',
     ],
     'import/no-unassigned-import': [
       'error',

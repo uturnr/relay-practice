@@ -6,7 +6,7 @@
   flex-direction: column;
   font-size: calc(10px + 2vmin);
   justify-content: center;
-  padding-bottom: 6rem;
+  padding: 5rem 1rem;
 }
 
 .App__header-content {
@@ -15,11 +15,26 @@
   flex-direction: column;
 }
 
+.App__header-label {
+  font-weight: 600;
+  font-size: 2.4rem;
+}
+
 .App__header-title {
-  padding-left: 1.3rem;
+  min-height: 8rem;
+}
+
+.App__nav {
+  margin-left: -1.3rem;
+  font-weight: 600;
+  font-size: 2.8rem;
+
+  ul {
+    margin: 0;
+  }
 }
 
 .App__body {
-  padding: 5rem;
+  margin: 5rem;
   text-align: left;
 }

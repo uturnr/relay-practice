@@ -3,25 +3,25 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from "relay-runtime";
-export type AppRepositoryNameQueryVariables = {
+export type AppQueryVariables = {
     name: string;
     owner: string;
 };
-export type AppRepositoryNameQueryResponse = {
+export type AppQueryResponse = {
     readonly repository: {
         readonly name: string;
         readonly url: unknown;
     } | null;
 };
-export type AppRepositoryNameQuery = {
-    readonly response: AppRepositoryNameQueryResponse;
-    readonly variables: AppRepositoryNameQueryVariables;
+export type AppQuery = {
+    readonly response: AppQueryResponse;
+    readonly variables: AppQueryVariables;
 };
 
 
 
 /*
-query AppRepositoryNameQuery(
+query AppQuery(
   $name: String!
   $owner: String!
 ) {
@@ -77,7 +77,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AppRepositoryNameQuery",
+    "name": "AppQuery",
     "selections": [
       {
         "alias": null,
@@ -100,7 +100,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AppRepositoryNameQuery",
+    "name": "AppQuery",
     "selections": [
       {
         "alias": null,
@@ -125,14 +125,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d70a40ac1a343970e40f6135a4cc1ab6",
+    "cacheID": "dd0aa8bce0d1ac7205e3e2ccae68000a",
     "id": null,
     "metadata": {},
-    "name": "AppRepositoryNameQuery",
+    "name": "AppQuery",
     "operationKind": "query",
-    "text": "query AppRepositoryNameQuery(\n  $name: String!\n  $owner: String!\n) {\n  repository(owner: $owner, name: $name) {\n    name\n    url\n    id\n  }\n}\n"
+    "text": "query AppQuery(\n  $name: String!\n  $owner: String!\n) {\n  repository(owner: $owner, name: $name) {\n    name\n    url\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '93002ffda4ff687b3ce4c38608826008';
+(node as any).hash = 'c9381d9af42d3cde3e568c0360096279';
 export default node;

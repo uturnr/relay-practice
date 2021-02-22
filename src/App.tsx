@@ -1,41 +1,53 @@
 import './App.css';
 import graphql from 'babel-plugin-relay/macro';
-import React from 'react';
-import type {
-  PreloadedQuery,
-} from 'react-relay/hooks';
 import {
-  RelayEnvironmentProvider,
+  BrowserProtocol,
+  queryMiddleware,
+} from 'farce';
+import type {
+  RenderErrorArgs,
+} from 'found';
+import {
+  createRender,
+  Link,
+  Route,
+  createFarceRouter,
+  makeRouteConfig,
+} from 'found';
+import {
+  Resolver,
+} from 'found-relay';
+import React, {
+  Suspense,
+} from 'react';
+import {
   loadQuery,
+  RelayEnvironmentProvider,
   usePreloadedQuery,
 } from 'react-relay/hooks';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-} from 'react-router-dom';
-import type {
-  OperationType,
-} from 'relay-runtime';
 
 import type {
-  AppRepositoryNameQueryResponse,
-} from './__generated__/AppRepositoryNameQuery.graphql';
+  AppQueryResponse,
+} from './__generated__/AppQuery.graphql';
 import {
   repoQueryVariables,
 } from './constants';
-import Issues from './Issues';
+import Loading from './Loading';
 import RelayEnvironment from './RelayEnvironment';
 
 const Commits = React.lazy(() => {
   return import('./Commits');
 });
+const Issues = React.lazy(() => {
+  return import('./Issues');
+});
 
-const {Suspense} = React;
+type BaseLayoutProps = {
+  children?: React.ReactChildren,
+};
 
-const RepositoryNameQuery = graphql`
-  query AppRepositoryNameQuery($name: String!, $owner: String!) {
+const AppQuery = graphql`
+  query AppQuery($name: String!, $owner: String!) {
     repository(owner: $owner, name: $name) {
       name
       url
@@ -47,80 +59,109 @@ const RepositoryNameQuery = graphql`
 // into our routing configuration, preloading data as we transition to new routes.
 const preloadedQuery = loadQuery(
   RelayEnvironment,
-  RepositoryNameQuery,
+  AppQuery,
   repoQueryVariables,
 );
 
-type AppProps = {
-  preloadedQuery: PreloadedQuery<OperationType, Record<string, unknown>>,
-};
+const BaseLayout = (props: BaseLayoutProps) => {
+  // eslint-disable-next-line no-console
+  console.log(props);
 
-// Inner component that reads the preloaded query results via `usePreloadedQuery()`.
-// This works as follows:
-// - If the query has completed, it returns the results of the query.
-// - If the query is still pending, it "suspends" (indicates to React is isn't
-//   ready to render yet). This will show the nearest <Suspense> fallback.
-// - If the query failed, it throws the failure error. For simplicity we aren't
-//   handling the failure case here.
-const AppInner = (props: AppProps) => {
   const data = usePreloadedQuery(
-    RepositoryNameQuery,
-    props.preloadedQuery,
-  ) as AppRepositoryNameQueryResponse;
+    AppQuery,
+    preloadedQuery,
+  ) as AppQueryResponse;
 
   // Need to determine how to properly type URI - it is coming back as
   // unknown.
   const repoUrl = data.repository?.url as string;
 
   return (
-    <Router>
-      <div className='App'>
-        <header className='App__header'>
-          <div className='App__header-content'>
-            <a
-              href={repoUrl}
-              rel='noreferrer nofollow'
-              target='_blank'
-            >
-              <h1 className='App__header-title'>{data.repository?.name ?? 'Repo not found'}</h1>
-            </a>
-            <nav>
-              <ul>
-                <li>
-                  <Link to='/'>Home</Link>
-                </li>
-                <li>
-                  <Link to='/commits'>Commits</Link>
-                </li>
-                <li>
-                  <Link to='/something'>Issues</Link>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </header>
-        <div className='App__body'>
-          <Suspense fallback={'Loading...'}>
-            <Switch>
-              <Route path='/commits'>
-                <Commits />
-              </Route>
-              <Route path='/something'>
-                <Issues />
-              </Route>
-            </Switch>
-          </Suspense>
+    <div className='App'>
+      <header className='App__header'>
+        <div className='App__header-content'>
+          <div className='App__header-label'>Repository:</div>
+          <a
+            href={repoUrl}
+            rel='noreferrer nofollow'
+            target='_blank'
+          >
+            <h1 className='App__header-title'>{data.repository?.name ?? 'Repo not found'}</h1>
+          </a>
+          <nav className='App__nav'>
+            <ul>
+              <li>
+                <Link to='/'>Home</Link>
+              </li>
+              <li>
+                <Link to='/commits'>Commits</Link>
+              </li>
+              <li>
+                <Link to='/issues'>Issues</Link>
+              </li>
+            </ul>
+          </nav>
         </div>
+      </header>
+      <div className='App__body'>
+        <Suspense fallback={<Loading />}>
+          {props.children}
+        </Suspense>
       </div>
-    </Router>
+    </div>
   );
 };
+
+const Router = createFarceRouter({
+  historyMiddlewares: [queryMiddleware],
+  historyProtocol: new BrowserProtocol(),
+  render: createRender({}),
+  renderError: ({error}: RenderErrorArgs) => {
+    return <div>{error.status === 404 ? 'Not found' : 'Error'}</div>;
+  },
+  routeConfig: makeRouteConfig(
+    <Route
+      Component={BaseLayout}
+      path='/'
+    >
+      <Route />
+      <Route
+        Component={Commits}
+        path='/commits'
+        prepareVariables={() => {
+          return repoQueryVariables;
+        }}
+        query={graphql`
+          query App_CommitsQuery($name: String!, $owner: String!) {
+            repository(owner: $owner, name: $name) {
+              ...Commits_repository
+            }
+          }
+        `}
+      />
+      <Route
+        Component={Issues}
+        path='/issues'
+        prepareVariables={() => {
+          return repoQueryVariables;
+        }}
+        query={graphql`
+          query App_IssuesQuery($name: String!, $owner: String!) {
+            repository(owner: $owner, name: $name) {
+              ...Issues_repository
+            }
+          }
+        `}
+      />
+    </Route>,
+  ),
+});
 
 const App = () => {
   return (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
-      <Suspense fallback={'Loading...'}>
-        <AppInner preloadedQuery={preloadedQuery} />
+      <Suspense fallback={<Loading />}>
+        <Router resolver={new Resolver(RelayEnvironment)} />,
       </Suspense>
     </RelayEnvironmentProvider>
   );

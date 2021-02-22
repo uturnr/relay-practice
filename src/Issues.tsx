@@ -3,23 +3,23 @@ import {
   Suspense,
 } from 'react';
 import {
-  loadQuery,
-  usePreloadedQuery,
+  useFragment,
 } from 'react-relay/hooks';
 
 import type {
-  IssuesRepositoryIssuesQueryResponse,
-} from './__generated__/IssuesRepositoryIssuesQuery.graphql';
-import {
-  repoQueryVariables,
-} from './constants';
-import RelayEnvironment from './RelayEnvironment';
+  Issues_repository$key,
+} from './__generated__/Issues_repository.graphql';
+import Loading from './Loading';
 
-const RepositoryIssuesQuery = graphql`
-  query IssuesRepositoryIssuesQuery($name: String!, $owner: String!) {
-    repository(owner: $owner, name: $name) {
-      name,
-      issues(last: 5) {
+type Props = {
+  repository: Issues_repository$key,
+};
+
+const Issues = (props: Props) => {
+  const data = useFragment(
+    graphql`
+      fragment Issues_repository on Repository {
+        issues(last: 5) {
         nodes {
           title
           author {
@@ -29,35 +29,15 @@ const RepositoryIssuesQuery = graphql`
           state
         }
       }
-    }
-  }
-`;
-
-// Immediately load the query as our app starts. For a real app, we'd move this
-// into our routing configuration, preloading data as we transition to new routes.
-const preloadedQuery = loadQuery(
-  RelayEnvironment,
-  RepositoryIssuesQuery,
-  repoQueryVariables,
-);
-
-// type IssuesProps = {
-//   preloadedQuery: PreloadedQuery<OperationType, Record<string, unknown>>,
-// };
-
-// For testing code-splitting
-// console.log('Issues.tsx');
-
-const Issues = () => {
-  const data = usePreloadedQuery(
-    RepositoryIssuesQuery,
-    preloadedQuery,
-  ) as IssuesRepositoryIssuesQueryResponse;
+      }
+    `,
+    props.repository,
+  );
 
   return (
-    <Suspense fallback={'Loading...'}>
+    <Suspense fallback={<Loading />}>
       <code className='Issues' style={{maxWidth: '80%'}}>
-        {JSON.stringify(data)}
+        {JSON.stringify(data, null, 2)}
       </code>
     </Suspense>
   );

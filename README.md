@@ -3,7 +3,7 @@
 Just trying some things out with Relay, Suspense and the GitHub API.
 
 ### Goals
-⏳ Demonstrate basic code and query splitting.
+✅ Demonstrate basic code and query splitting.
 ([#1](https://github.com/uturnr/relay-practice/issues/1))
 
 ⏳ Display relevant data about recent commits and issues.

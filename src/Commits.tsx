@@ -3,66 +3,44 @@ import {
   Suspense,
 } from 'react';
 import {
-  loadQuery,
-  usePreloadedQuery,
+  useFragment,
 } from 'react-relay/hooks';
 
 import type {
-  CommitsRepositoryCommitsQueryResponse,
-} from './__generated__/CommitsRepositoryCommitsQuery.graphql';
-import {
-  repoQueryVariables,
-} from './constants';
-import RelayEnvironment from './RelayEnvironment';
+  Commits_repository$key,
+} from './__generated__/Commits_repository.graphql';
+import Loading from './Loading';
 
-const RepositoryCommitsQuery = graphql`
-  query CommitsRepositoryCommitsQuery($name: String!, $owner: String!) {
-    repository(owner: $owner, name: $name) {
-      name
-      nameWithOwner
-      url
-      defaultBranchRef {
-        target {
-          ... on Commit {
-            history(first: 5) {
-              edges {
-                node {
-                  url
+type Props = {
+  repository: Commits_repository$key,
+};
+
+const Commits = (props: Props) => {
+  const data = useFragment(
+    graphql`
+      fragment Commits_repository on Repository {
+        defaultBranchRef {
+          target {
+            ... on Commit {
+              history(first: 5) {
+                edges {
+                  node {
+                    url
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-  }
-`;
-
-// Immediately load the query as our app starts. For a real app, we'd move this
-// into our routing configuration, preloading data as we transition to new routes.
-const preloadedQuery = loadQuery(
-  RelayEnvironment,
-  RepositoryCommitsQuery,
-  repoQueryVariables,
-);
-
-// type CommitsProps = {
-//   preloadedQuery: PreloadedQuery<OperationType, Record<string, unknown>>,
-// };
-
-// For testing code-splitting
-// console.log('Commits.tsx');
-
-const Commits = () => {
-  const data = usePreloadedQuery(
-    RepositoryCommitsQuery,
-    preloadedQuery,
-  ) as CommitsRepositoryCommitsQueryResponse;
+    `,
+    props.repository,
+  );
 
   return (
-    <Suspense fallback={'Loading...'}>
+    <Suspense fallback={<Loading />}>
       <code className='Commits' style={{maxWidth: '80%'}}>
-        {JSON.stringify(data)}
+        {JSON.stringify(data, null, 2)}
       </code>
     </Suspense>
   );
