@@ -1,45 +1,73 @@
 import graphql from 'babel-plugin-relay/macro';
 import {
-  Suspense,
-} from 'react';
-import {
   useFragment,
 } from 'react-relay/hooks';
 
 import type {
-  Issues_repository$key,
-} from './__generated__/Issues_repository.graphql';
-import Loading from './Loading';
+  Issues_issue$key,
+} from './__generated__/Issues_issue.graphql';
+import './Issues.scss';
 
 type Props = {
-  repository: Issues_repository$key,
+  issues: Issues_issue$key,
 };
 
+const fragmentSpec = graphql`
+  fragment Issues_issue on Issue @relay(plural: true) {
+    id
+    title
+    author {
+      avatarUrl(size: 80)
+      url
+    }
+    url
+    state
+  }
+`;
+
 const Issues = (props: Props) => {
-  const data = useFragment(
-    graphql`
-      fragment Issues_repository on Repository {
-        issues(last: 5) {
-        nodes {
-          title
-          author {
-            login
-          }
-          url
-          state
-        }
-      }
-      }
-    `,
-    props.repository,
-  );
+  const issues = useFragment(fragmentSpec, props.issues);
 
   return (
-    <Suspense fallback={<Loading />}>
-      <code className='Issues' style={{maxWidth: '80%'}}>
-        {JSON.stringify(data, null, 2)}
-      </code>
-    </Suspense>
+    <>
+      {issues.map((issue) => {
+        if (issue === null) {
+          return (
+            <div className='Issues__commit'>
+              Issue not found.
+            </div>
+          );
+        }
+
+        return (
+          <div className='Issues__commit' key={issue.id}>
+            <a
+              href={(issue.author?.url ?? '') as string}
+              rel='noreferrer nofollow'
+              target='_blank'
+            >
+              <img
+                className='Issues__author-image'
+                src={(issue.author?.avatarUrl ?? '') as string}
+              />
+            </a>
+            <div className='Issues__details'>
+              <a
+                className='Issues__details-title'
+                href={issue.url as string}
+                rel='noreferrer nofollow'
+                target='_blank'
+              >
+                {issue.title}
+              </a>
+              <div className='Issues__details-state'>
+                {issue.state}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 };
 

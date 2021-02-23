@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import graphql from 'babel-plugin-relay/macro';
 import {
   BrowserProtocol,
@@ -32,14 +32,15 @@ import type {
 import {
   repoQueryVariables,
 } from './constants';
+import HomeMessage from './HomeMessage';
 import Loading from './Loading';
 import RelayEnvironment from './RelayEnvironment';
 
-const Commits = React.lazy(() => {
-  return import('./Commits');
+const CommitList = React.lazy(() => {
+  return import('./CommitList');
 });
-const Issues = React.lazy(() => {
-  return import('./Issues');
+const IssueList = React.lazy(() => {
+  return import('./IssueList');
 });
 
 type BaseLayoutProps = {
@@ -104,9 +105,11 @@ const BaseLayout = (props: BaseLayoutProps) => {
         </div>
       </header>
       <div className='App__body'>
-        <Suspense fallback={<Loading />}>
-          {props.children}
-        </Suspense>
+        <div className='App__body-inner'>
+          <Suspense fallback={<Loading />}>
+            {props.children}
+          </Suspense>
+        </div>
       </div>
     </div>
   );
@@ -124,9 +127,9 @@ const Router = createFarceRouter({
       Component={BaseLayout}
       path='/'
     >
-      <Route />
+      <Route Component={HomeMessage} />
       <Route
-        Component={Commits}
+        Component={CommitList}
         path='/commits'
         prepareVariables={() => {
           return repoQueryVariables;
@@ -134,13 +137,13 @@ const Router = createFarceRouter({
         query={graphql`
           query App_CommitsQuery($name: String!, $owner: String!) {
             repository(owner: $owner, name: $name) {
-              ...Commits_repository
+              ...CommitList_repository
             }
           }
         `}
       />
       <Route
-        Component={Issues}
+        Component={IssueList}
         path='/issues'
         prepareVariables={() => {
           return repoQueryVariables;
@@ -148,7 +151,7 @@ const Router = createFarceRouter({
         query={graphql`
           query App_IssuesQuery($name: String!, $owner: String!) {
             repository(owner: $owner, name: $name) {
-              ...Issues_repository
+              ...IssueList_repository
             }
           }
         `}
@@ -161,7 +164,7 @@ const App = () => {
   return (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
       <Suspense fallback={<Loading />}>
-        <Router resolver={new Resolver(RelayEnvironment)} />,
+        <Router resolver={new Resolver(RelayEnvironment)} />
       </Suspense>
     </RelayEnvironmentProvider>
   );

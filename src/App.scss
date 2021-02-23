@@ -35,6 +35,13 @@
 }
 
 .App__body {
+  display: flex;
+  justify-content: center;
   margin: 5rem;
   text-align: left;
+}
+
+.App__body-inner {
+  width: 100%;
+  max-width: 800px;
 }

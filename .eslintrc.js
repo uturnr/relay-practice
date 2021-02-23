@@ -28,7 +28,10 @@ module.exports = {
     'import/no-unassigned-import': [
       'error',
       {
-        allow: ['**/*.css'],
+        allow: [
+          '**/*.css',
+          '**/*.scss',
+        ],
       },
     ],
     'import/order': [

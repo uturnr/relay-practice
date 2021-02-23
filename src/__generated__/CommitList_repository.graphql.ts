@@ -4,24 +4,22 @@
 
 import { ReaderFragment } from "relay-runtime";
 import { FragmentRefs } from "relay-runtime";
-export type Commits_repository = {
+export type CommitList_repository = {
     readonly defaultBranchRef: {
         readonly target: {
             readonly history?: {
                 readonly edges: ReadonlyArray<{
-                    readonly node: {
-                        readonly url: unknown;
-                    } | null;
+                    readonly " $fragmentRefs": FragmentRefs<"Commits_edges">;
                 } | null> | null;
             };
         };
     } | null;
-    readonly " $refType": "Commits_repository";
+    readonly " $refType": "CommitList_repository";
 };
-export type Commits_repository$data = Commits_repository;
-export type Commits_repository$key = {
-    readonly " $data"?: Commits_repository$data;
-    readonly " $fragmentRefs": FragmentRefs<"Commits_repository">;
+export type CommitList_repository$data = CommitList_repository;
+export type CommitList_repository$key = {
+    readonly " $data"?: CommitList_repository$data;
+    readonly " $fragmentRefs": FragmentRefs<"CommitList_repository">;
 };
 
 
@@ -30,7 +28,7 @@ const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "Commits_repository",
+  "name": "CommitList_repository",
   "selections": [
     {
       "alias": null,
@@ -74,22 +72,9 @@ const node: ReaderFragment = {
                       "plural": true,
                       "selections": [
                         {
-                          "alias": null,
                           "args": null,
-                          "concreteType": "Commit",
-                          "kind": "LinkedField",
-                          "name": "node",
-                          "plural": false,
-                          "selections": [
-                            {
-                              "alias": null,
-                              "args": null,
-                              "kind": "ScalarField",
-                              "name": "url",
-                              "storageKey": null
-                            }
-                          ],
-                          "storageKey": null
+                          "kind": "FragmentSpread",
+                          "name": "Commits_edges"
                         }
                       ],
                       "storageKey": null
@@ -111,5 +96,5 @@ const node: ReaderFragment = {
   "type": "Repository",
   "abstractKey": null
 };
-(node as any).hash = '389565d0adb3371ab79a127cf8927d70';
+(node as any).hash = '91e6796b1c0204f1c9aac71a9bdf88fb';
 export default node;
