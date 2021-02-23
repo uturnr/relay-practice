@@ -10,7 +10,7 @@ export type App_IssuesQueryVariables = {
 };
 export type App_IssuesQueryResponse = {
     readonly repository: {
-        readonly " $fragmentRefs": FragmentRefs<"Issues_repository">;
+        readonly " $fragmentRefs": FragmentRefs<"IssueList_repository">;
     } | null;
 };
 export type App_IssuesQuery = {
@@ -26,28 +26,34 @@ query App_IssuesQuery(
   $owner: String!
 ) {
   repository(owner: $owner, name: $name) {
-    ...Issues_repository
+    ...IssueList_repository
     id
   }
 }
 
-fragment Issues_repository on Repository {
+fragment IssueList_repository on Repository {
   issues(last: 5) {
     nodes {
-      title
-      author {
-        __typename
-        login
-        ... on Node {
-          __isNode: __typename
-          id
-        }
-      }
-      url
-      state
+      ...Issues_issue
       id
     }
   }
+}
+
+fragment Issues_issue on Issue {
+  id
+  title
+  author {
+    __typename
+    avatarUrl(size: 80)
+    url
+    ... on Node {
+      __isNode: __typename
+      id
+    }
+  }
+  url
+  state
 }
 */
 
@@ -82,6 +88,13 @@ v2 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "url",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -101,7 +114,7 @@ return {
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "Issues_repository"
+            "name": "IssueList_repository"
           }
         ],
         "storageKey": null
@@ -146,6 +159,7 @@ return {
                 "name": "nodes",
                 "plural": true,
                 "selections": [
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -170,11 +184,18 @@ return {
                       },
                       {
                         "alias": null,
-                        "args": null,
+                        "args": [
+                          {
+                            "kind": "Literal",
+                            "name": "size",
+                            "value": 80
+                          }
+                        ],
                         "kind": "ScalarField",
-                        "name": "login",
-                        "storageKey": null
+                        "name": "avatarUrl",
+                        "storageKey": "avatarUrl(size:80)"
                       },
+                      (v3/*: any*/),
                       {
                         "kind": "InlineFragment",
                         "selections": [
@@ -186,21 +207,14 @@ return {
                     ],
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "url",
-                    "storageKey": null
-                  },
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
                     "name": "state",
                     "storageKey": null
-                  },
-                  (v2/*: any*/)
+                  }
                 ],
                 "storageKey": null
               }
@@ -214,14 +228,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "69f7ddeea23260bd049381083db0595a",
+    "cacheID": "be14a6ab8736c77e46ebeca927bdd330",
     "id": null,
     "metadata": {},
     "name": "App_IssuesQuery",
     "operationKind": "query",
-    "text": "query App_IssuesQuery(\n  $name: String!\n  $owner: String!\n) {\n  repository(owner: $owner, name: $name) {\n    ...Issues_repository\n    id\n  }\n}\n\nfragment Issues_repository on Repository {\n  issues(last: 5) {\n    nodes {\n      title\n      author {\n        __typename\n        login\n        ... on Node {\n          __isNode: __typename\n          id\n        }\n      }\n      url\n      state\n      id\n    }\n  }\n}\n"
+    "text": "query App_IssuesQuery(\n  $name: String!\n  $owner: String!\n) {\n  repository(owner: $owner, name: $name) {\n    ...IssueList_repository\n    id\n  }\n}\n\nfragment IssueList_repository on Repository {\n  issues(last: 5) {\n    nodes {\n      ...Issues_issue\n      id\n    }\n  }\n}\n\nfragment Issues_issue on Issue {\n  id\n  title\n  author {\n    __typename\n    avatarUrl(size: 80)\n    url\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n  }\n  url\n  state\n}\n"
   }
 };
 })();
-(node as any).hash = 'a195320ab95db0f05dc92281487ceaf7';
+(node as any).hash = '11a704706185e2c6f04fa5c1e9b45363';
 export default node;

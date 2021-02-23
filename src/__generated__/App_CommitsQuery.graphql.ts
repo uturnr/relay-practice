@@ -10,7 +10,7 @@ export type App_CommitsQueryVariables = {
 };
 export type App_CommitsQueryResponse = {
     readonly repository: {
-        readonly " $fragmentRefs": FragmentRefs<"Commits_repository">;
+        readonly " $fragmentRefs": FragmentRefs<"CommitList_repository">;
     } | null;
 };
 export type App_CommitsQuery = {
@@ -26,26 +26,40 @@ query App_CommitsQuery(
   $owner: String!
 ) {
   repository(owner: $owner, name: $name) {
-    ...Commits_repository
+    ...CommitList_repository
     id
   }
 }
 
-fragment Commits_repository on Repository {
+fragment CommitList_repository on Repository {
   defaultBranchRef {
     target {
       __typename
       ... on Commit {
         history(first: 5) {
           edges {
-            node {
-              url
-              id
-            }
+            ...Commits_edges
           }
         }
       }
       id
+    }
+    id
+  }
+}
+
+fragment Commits_edges on CommitEdge {
+  node {
+    abbreviatedOid
+    url
+    message
+    committedDate
+    author {
+      user {
+        avatarUrl(size: 80)
+        url
+        id
+      }
     }
     id
   }
@@ -83,6 +97,13 @@ v2 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "url",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -102,7 +123,7 @@ return {
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "Commits_repository"
+            "name": "CommitList_repository"
           }
         ],
         "storageKey": null
@@ -186,7 +207,59 @@ return {
                                     "alias": null,
                                     "args": null,
                                     "kind": "ScalarField",
-                                    "name": "url",
+                                    "name": "abbreviatedOid",
+                                    "storageKey": null
+                                  },
+                                  (v3/*: any*/),
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "message",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "kind": "ScalarField",
+                                    "name": "committedDate",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "GitActor",
+                                    "kind": "LinkedField",
+                                    "name": "author",
+                                    "plural": false,
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "concreteType": "User",
+                                        "kind": "LinkedField",
+                                        "name": "user",
+                                        "plural": false,
+                                        "selections": [
+                                          {
+                                            "alias": null,
+                                            "args": [
+                                              {
+                                                "kind": "Literal",
+                                                "name": "size",
+                                                "value": 80
+                                              }
+                                            ],
+                                            "kind": "ScalarField",
+                                            "name": "avatarUrl",
+                                            "storageKey": "avatarUrl(size:80)"
+                                          },
+                                          (v3/*: any*/),
+                                          (v2/*: any*/)
+                                        ],
+                                        "storageKey": null
+                                      }
+                                    ],
                                     "storageKey": null
                                   },
                                   (v2/*: any*/)
@@ -217,14 +290,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "99f8cfcb7741f91a3b58bd1a5e6055d4",
+    "cacheID": "88bed22b392cc0bdba6ed08c918d981f",
     "id": null,
     "metadata": {},
     "name": "App_CommitsQuery",
     "operationKind": "query",
-    "text": "query App_CommitsQuery(\n  $name: String!\n  $owner: String!\n) {\n  repository(owner: $owner, name: $name) {\n    ...Commits_repository\n    id\n  }\n}\n\nfragment Commits_repository on Repository {\n  defaultBranchRef {\n    target {\n      __typename\n      ... on Commit {\n        history(first: 5) {\n          edges {\n            node {\n              url\n              id\n            }\n          }\n        }\n      }\n      id\n    }\n    id\n  }\n}\n"
+    "text": "query App_CommitsQuery(\n  $name: String!\n  $owner: String!\n) {\n  repository(owner: $owner, name: $name) {\n    ...CommitList_repository\n    id\n  }\n}\n\nfragment CommitList_repository on Repository {\n  defaultBranchRef {\n    target {\n      __typename\n      ... on Commit {\n        history(first: 5) {\n          edges {\n            ...Commits_edges\n          }\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment Commits_edges on CommitEdge {\n  node {\n    abbreviatedOid\n    url\n    message\n    committedDate\n    author {\n      user {\n        avatarUrl(size: 80)\n        url\n        id\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '619d40ffae9b6796290f1bd9100e0d8b';
+(node as any).hash = '5bd812224c041e1054565c624aee8a06';
 export default node;

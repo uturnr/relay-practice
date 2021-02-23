@@ -1,0 +1,56 @@
+.Commits__commit {
+  background-color: #f4f6fa;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  overflow-x: hidden;
+  padding: 1.5rem 2.5rem;
+}
+
+.Commits__author-image {
+  border-radius: 100%;
+  height: 4rem;
+  width: 4rem;
+  margin-right: 1rem;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.92;
+  }
+}
+
+.Commits__id {
+  color: #5b6477;
+  font-weight: 600;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
+  margin-right: 2rem;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.Commits__details {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  font-weight: 500;
+  justify-content: space-between;
+  overflow-x: hidden;
+}
+
+.Commits__details-message {
+  color: #282c34;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.Commits__details-date {
+  color: #8d95a7;
+  flex: 1 0 auto;
+  margin-left: 10rem;
+  text-align: right;
+}
